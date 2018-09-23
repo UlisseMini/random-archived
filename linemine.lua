@@ -41,15 +41,20 @@ local function isTrash(block)
 end
 
 local function processblocks()
+	
 	local _, blockup = turtle.inspectUp()
 	local _, blockdown = turtle.inspectDown()
-	if isTrash(blockup.name) == false then
-		log('[INFO] Found '..blockup.name, 3)
-		turtle.digUp()
+	if blockup.name then
+		if isTrash(blockup.name) == false then
+			log('[INFO] Found '..blockup.name, 3)
+			turtle.digUp()
+		end
 	end
-	if isTrash(blockdown.name) == false then
-		log('[INFO] Found '..blockdown.name, 3)
-		turtle.digDown()
+	if blockdown.name then
+		if isTrash(blockdown.name) == false then
+			log('[INFO] Found '..blockdown.name, 3)
+			turtle.digDown()
+		end
 	end
 end
 
