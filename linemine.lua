@@ -3,6 +3,7 @@
 args = { ... }
 if #args ~= 1 then
 	print('Usage: linemine <distance>')
+	error()
 end
 -- Varables --
 local distance = args[1]
@@ -59,7 +60,7 @@ local function processblocks()
 end
 
 -- Main program --
-
+checkFuel()
 for i=1,distance do
 	turtle.dig()
 	processblocks()
