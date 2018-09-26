@@ -123,16 +123,7 @@ local function printCords()
 end
 -- Main moveto function
 local function moveto(xTarget, yTarget, zTarget)
-  -- Moves to y
-  while yTarget < y do
-    turtle.digDown()
-    down()
-  end
-
-  while yTarget > y do
-    turtle.digUp()
-    up()
-  end
+  
   -- Turns to correct orientation then moves forward until its at the right x cord
   if xTarget < x then
     look('west')
@@ -164,6 +155,17 @@ local function moveto(xTarget, yTarget, zTarget)
       forward()
     end
   end
+  -- Moves to correct y cord
+  while yTarget < y do
+    turtle.digDown()
+    down()
+  end
+
+  while yTarget > y do
+    turtle.digUp()
+    up()
+  end
+  
 end
 printCords()
 moveto(dX, dY, dZ)
