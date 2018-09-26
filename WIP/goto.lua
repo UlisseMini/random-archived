@@ -16,7 +16,7 @@ local y = tonumber(args[2])
 local z = tonumber(args[3])
 
 -- Turtle orientation 
-local orientation = tonumber(args[7]) -- orientation
+local orientation = args[7] -- orientation
 local orientations = {
   [0] = "north",
   [1] = "east",
@@ -26,11 +26,12 @@ local orientations = {
 
 -- Makes sure orientation is a string
 if type(orientation) ~= 'string' then
-  print('Orientation must be north east west or south')
+  print('Orientation must be north east south or west (look in f3 menu)')
   error()
 end
 
 -- Turns orientation from a string into its number
+-- Loop starts at zero since my list starts at index 0
 for i=0,#orientations do
   if orientation == orientations[i] then
     orientation = i
@@ -43,13 +44,38 @@ local dX = tonumber(args[4])
 local dY = tonumber(args[5])
 local dZ = tonumber(args[6])
 
+-- zDiff and xDiff
+-- Had to be tables starting at 0 to match orientation
+local zDiff = {
+  [0] = -1,
+  [1] = 0,
+  [2] = 1,
+  [3] = 0
+}
+local xDiff = { 
+  [0] = 0,
+  [1] = 1,
+  [2] = 0,
+  [3] = -1
+}
+
 -- Logging function
 local function log(msg, msg_debug_level)
-  if debug_level < msg_debug_level then
+  if debug_level <= msg_debug_level then
     print(msg)
   end
 end
-
+-- Moving forward
+local function forward()
+  if turtle.forward() then
+    -- Changed x and z cords
+    x = x + xDiff[orientation]
+    z = z + zDiff[orientation]
+    return true
+  else
+    return false
+  end
+end
 -- Moving up and down
 local function up()
   turtle.digUp()
@@ -70,9 +96,7 @@ local function down()
     return false
   end
 end
-
 -- Turning functions
--- Store it in an integer. Turn right? facing = facing + 1 % 4  Turn left? facing = facing +3 % 4
 local function right()
   turtle.turnRight()
   -- Orientation
@@ -87,7 +111,6 @@ end
 
 -- Main moveto function
 local function moveto(x, y, z)
-  -- Work in progress function so far only does y (orientation is a bitch)
   -- Moves to y
   while dY <= y do
     turtle.digDown()
@@ -98,16 +121,7 @@ local function moveto(x, y, z)
     turtle.digUp()
     up()
   end
+  -- Turns to correct orientation then moves forward until its at the right x cord
 
-end
--- Tests orientation
-
-for i=1,5 do
-  right()
-  log('[DEBUG] i am looking '..orientations[orientation])
-end
-
-for i=1,5 do
-  left()
-  log('[DEBUG] i am looking '..orientations[orientation])
+  -- Turns to correct orientation then moves forward until its at the right z cord
 end
