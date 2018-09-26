@@ -25,6 +25,7 @@ local dY = tonumber(args[5])
 local dZ = tonumber(args[6])
 
 -- Logging function
+-- I'll expand this later
 local function log(msg)
   print(msg)
 end
