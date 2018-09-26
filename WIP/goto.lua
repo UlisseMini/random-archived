@@ -65,16 +65,23 @@ local function log(msg, msg_debug_level)
     print(msg)
   end
 end
+-- Turn to an orientation
+local function look(direction)
+  -- Could make this faster but i'm lazy
+  while direction ~= orientations[orientation] do
+    right()
+  end
+end
 -- Moving forward
 local function forward()
-  if turtle.forward() then
-    -- Changed x and z cords
+  -- If the turtle can't move keep trying 
+  while not(turtle.forward()) do
+    sleep(0.1)
+  end
+    -- Change x and z cords
     x = x + xDiff[orientation]
     z = z + zDiff[orientation]
-    return true
-  else
-    return false
-  end
+    -- Does not return a value since it will keep trying until it can move
 end
 -- Moving up and down
 local function up()
@@ -110,18 +117,42 @@ local function left()
 end
 
 -- Main moveto function
-local function moveto(x, y, z)
+local function moveto(xTarget, yTarget, zTarget)
   -- Moves to y
-  while dY <= y do
+  while yTarget < y do
     turtle.digDown()
     down()
   end
 
-  while dY >= y do
+  while yTarget > y do
     turtle.digUp()
     up()
   end
   -- Turns to correct orientation then moves forward until its at the right x cord
+  if xTarget < x then
+    look('west')
+    while xTarget < x do
+      forward()
+    end
+  end
+  if xTarget > x then
+    look('east')
+    while xTarget > x do
+      moveForward()
+    end
+  end
 
   -- Turns to correct orientation then moves forward until its at the right z cord
+  if zTarget < z then
+    look('north')
+    while zTarget < z do
+      forward()
+    end
+  end
+  if zTarget > z then
+    look('south')
+    while zTarget > z do
+      moveForward()
+    end
+  end
 end
