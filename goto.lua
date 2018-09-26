@@ -105,7 +105,8 @@ local function down()
   end
 end
 -- Turning functions
--- made this global cuz i was getting an erorr
+-- made this global cuz i was getting an error when
+-- the other function used it
 function right()
   turtle.turnRight()
   -- Orientation
