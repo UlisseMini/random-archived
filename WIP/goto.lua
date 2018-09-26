@@ -60,7 +60,7 @@ local xDiff = {
 }
 
 -- Logging function
-local function log(msg, msg_debug_level)
+function log(msg, msg_debug_level)
   if debug_level <= msg_debug_level then
     print(msg)
   end
@@ -69,6 +69,7 @@ end
 local function look(direction)
   -- Could make this faster but i'm lazy
   while direction ~= orientations[orientation] do
+    log('[DEBUG] I am now facing '..orientations[orientation], 4)
     right()
   end
 end
@@ -104,7 +105,8 @@ local function down()
   end
 end
 -- Turning functions
-local function right()
+-- made this global cuz i was getting an erorr
+function right()
   turtle.turnRight()
   -- Orientation
   orientation = (orientation + 1) % 4
@@ -115,7 +117,10 @@ local function left()
   -- Orientation
   orientation = (orientation - 1) % 4
 end
-
+-- Function to print cords
+local function printCords()
+  print('[DEBUG] X: '..x..' Y: '..y..' X: '..z)
+end
 -- Main moveto function
 local function moveto(xTarget, yTarget, zTarget)
   -- Moves to y
@@ -132,13 +137,15 @@ local function moveto(xTarget, yTarget, zTarget)
   if xTarget < x then
     look('west')
     while xTarget < x do
+      turtle.dig()
       forward()
     end
   end
   if xTarget > x then
     look('east')
     while xTarget > x do
-      moveForward()
+      turtle.dig()
+      forward()
     end
   end
 
@@ -146,13 +153,18 @@ local function moveto(xTarget, yTarget, zTarget)
   if zTarget < z then
     look('north')
     while zTarget < z do
+      turtle.dig()
       forward()
     end
   end
   if zTarget > z then
     look('south')
     while zTarget > z do
-      moveForward()
+      turtle.dig()
+      forward()
     end
   end
 end
+printCords()
+moveto(dX, dY, dZ)
+printCords()
