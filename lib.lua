@@ -8,6 +8,7 @@ local orientation = 0
 
 -- Table for saving posisions
 local saved_positions = {}
+local blocks_dug = 0
 
 -- Diference in cords with diferent orientations
 local zDiff = {
@@ -78,8 +79,6 @@ function lib.look(direction)
 	-- I've gotta find a beter way :P
 	while orientation ~= direction do
 	  lib.turnRight()
-    --print('Orientation is '..orientation)
-    --print('Direction is '..direction)
 	end
 end
 

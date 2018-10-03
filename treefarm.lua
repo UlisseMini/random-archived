@@ -60,9 +60,7 @@ function digtree()
     turtle.digUp()
     turtle.up()
   end
-  while turtle.detectDown() == false do
-    turtle.down()
-  end
+  while turtle.down() do end -- Moves down until it can't anymore.
   turtle.back()
   plant()
 end
@@ -80,6 +78,7 @@ function check_fuel()
   end
 end
 function dumpitemstochest()
+  -- Everything past slot 11 has a use. the turtle needs to hang on to them.
   for i = 1,11 do
     turtle.select(i)
     turtle.dropUp(63)

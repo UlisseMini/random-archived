@@ -39,7 +39,8 @@ local function log(msg)
 	file_handle.write(msg..'\n') -- Adds newline after message
 	file_handle.close()
 end
-function inList(value, list)
+
+local function inList(value, list)
 	for i=1,#list do
 		if value == list[i] then
 			return true
@@ -47,6 +48,7 @@ function inList(value, list)
 	end
 	return false
 end
+
 function cleanInventory()
 	local item
 	local prevSlot = turtle.getSelectedSlot()
