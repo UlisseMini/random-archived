@@ -36,7 +36,7 @@ local function orientationToNumber(orientationStr)
 	-- Turns an orienation string into an orientation number.
 	for i=0,#orientations do
 	    if orientationStr == orientations[i] then
-	      return orientationStr
+	      return i
 	    end
 	end
 end
@@ -71,13 +71,15 @@ function lib.look(direction)
 	if type(direction) == 'string' then
 		direction = orientationToNumber(direction)
 	
-	elseif type(direction) ~= 'number' or 'string' then
-		print('Invalid look direction.')
-	end
+	elseif type(direction) ~= 'number' then
+    error('Direction is not a number')
+  end
 
 	-- I've gotta find a beter way :P
 	while orientation ~= direction do
-		turtle.turnRight()
+	  lib.turnRight()
+    --print('Orientation is '..orientation)
+    --print('Direction is '..direction)
 	end
 end
 
@@ -151,6 +153,8 @@ function lib.savePos(name)
 end
 function lib.gotoPos(name)
 	lib.goto(saved_positions[name].x, saved_positions[name].y, saved_positions[name].z)
+  -- Looks the way you were looking when you took the snapshot.
+  lib.look(saved_positions[name].orientation)
 end
 -- Careful this breaks blocks.
 function lib.goto(xTarget, yTarget, zTarget)
@@ -184,14 +188,14 @@ function lib.goto(xTarget, yTarget, zTarget)
 
   -- Turns to correct orientation then moves forward until its at the right z cord
   if zTarget < z then
-    look('north')
+    lib.look('north')
     while zTarget < z do
       lib.dig()
       lib.forward()
     end
   end
   if zTarget > z then
-    look('south')
+    lib.look('south')
     while zTarget > z do
       lib.dig()
       lib.forward()
