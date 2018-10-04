@@ -1,6 +1,8 @@
--- Custom functions i use in a few programs --
+-- Valvates library for cordanite management and stuff.
+-- If you have an idea for feature make an issue or
+-- Create a pull request if you're a coder.
 
-local lib = {}
+local t = {}
 
 -- Cords and orientation all starting at 0
 local x, y, z = 0, 0 ,0
@@ -54,20 +56,20 @@ local function orientationToString(orientationInt)
 end
 
 -- Turning functions
-function lib.turnRight()
+function t.turnRight()
 	turtle.turnRight()
 	-- This "magic" math adds one to orientation unless orientation is 3, then it moves to 0.
 	-- This could also be done with an if statement but this is cleaner imo
 	orientation = (orientation + 1) % 4
 end
 
-function lib.turnLeft()
+function t.turnLeft()
 	turtle.turnLeft()
 	orientation = (orientation - 1) % 4
 end
 
 -- Looks to a direction, can be passed a string or a number
-function lib.look(direction)
+function t.look(direction)
 	-- makes sure the value passed is valid.
 	if type(direction) == 'string' then
 		direction = orientationToNumber(direction)
@@ -78,11 +80,11 @@ function lib.look(direction)
 
 	-- I've gotta find a beter way :P
 	while orientation ~= direction do
-	  lib.turnRight()
+	  t.turnRight()
 	end
 end
 
-function lib.forward()
+function t.forward()
     if turtle.forward() then
       	-- Change x and z cords
       	x = x + xDiff[orientation]
@@ -94,7 +96,7 @@ function lib.forward()
     end
 end
 
-function lib.up()
+function t.up()
 	if turtle.up() then
 		y = y + 1
 		return true
@@ -103,7 +105,7 @@ function lib.up()
 	end
 end
 
-function lib.down()
+function t.down()
 	if turtle.down() then
 		y = y - 1
 		return true
@@ -112,7 +114,7 @@ function lib.down()
 	end
 end
 
-function lib.digDown()
+function t.digDown()
 	if turtle.digDown() then
 		blocks_dug = blocks_dug + 1
 		return true
@@ -120,7 +122,7 @@ function lib.digDown()
 		return false
 	end
 end
-function lib.dig()
+function t.dig()
 	if turtle.dig() then
 		blocks_dug = blocks_dug + 1
 		return true
@@ -128,7 +130,7 @@ function lib.dig()
 		return false
 	end
 end
-function lib.digUp()
+function t.digUp()
 	if turtle.digUp() then
 		blocks_dug = blocks_dug + 1
 		return true
@@ -138,7 +140,7 @@ function lib.digUp()
 end
 
 -- This function saves the turtles posision so it can be returned to later.
-function lib.savePos(name)
+function t.savePos(name)
 	if type(name) ~= 'string' then
 		error('Position name must be a string.')
 	end
@@ -150,56 +152,57 @@ function lib.savePos(name)
 		orientation = orientation
 	}
 end
-function lib.gotoPos(name)
-	lib.goto(saved_positions[name].x, saved_positions[name].y, saved_positions[name].z)
+function t.gotoPos(name)
+	t.goto(saved_positions[name].x, saved_positions[name].y, saved_positions[name].z)
   -- Looks the way you were looking when you took the snapshot.
-  lib.look(saved_positions[name].orientation)
+  t.look(saved_positions[name].orientation)
 end
+
 -- Careful this breaks blocks.
-function lib.goto(xTarget, yTarget, zTarget)
+function t.goto(xTarget, yTarget, zTarget)
   -- Moves to y
   while yTarget < y do
-    lib.digDown()
-    lib.down()
+    t.digDown()
+    t.down()
   end
 
   while yTarget > y do
-    lib.digUp()
-    lib.up()
+    t.digUp()
+    t.up()
   end
 
   -- Turns to correct orientation then moves forward until its at the right x cord
   if xTarget < x then
-    lib.look('west')
+    t.look('west')
     while xTarget < x do
-      lib.dig()
-      lib.forward()
+      t.dig()
+      t.forward()
 		end
   end
 
   if xTarget > x then
-    lib.look('east')
+    t.look('east')
     while xTarget > x do
-      lib.dig()
-      lib.forward()
+      t.dig()
+      t.forward()
     end
   end
 
   -- Turns to correct orientation then moves forward until its at the right z cord
   if zTarget < z then
-    lib.look('north')
+    t.look('north')
     while zTarget < z do
-      lib.dig()
-      lib.forward()
+      t.dig()
+      t.forward()
     end
   end
   if zTarget > z then
-    lib.look('south')
+    t.look('south')
     while zTarget > z do
-      lib.dig()
-      lib.forward()
+      t.dig()
+      t.forward()
     end
   end
 end
 
-return lib
+return t
