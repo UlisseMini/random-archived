@@ -10,7 +10,7 @@ local orientation = 0
 
 -- Table for saving posisions
 local saved_positions = {}
-local blocks_dug = 0
+t.blocks_dug = 0
 
 -- Diference in cords with diferent orientations
 local zDiff = {
@@ -116,7 +116,7 @@ end
 
 function t.digDown()
 	if turtle.digDown() then
-		blocks_dug = blocks_dug + 1
+		t.blocks_dug = t.blocks_dug + 1
 		return true
 	else
 		return false
@@ -124,7 +124,7 @@ function t.digDown()
 end
 function t.dig()
 	if turtle.dig() then
-		blocks_dug = blocks_dug + 1
+		t.blocks_dug = t.blocks_dug + 1
 		return true
 	else
 		return false
@@ -132,7 +132,7 @@ function t.dig()
 end
 function t.digUp()
 	if turtle.digUp() then
-		blocks_dug = blocks_dug + 1
+		t.blocks_dug = t.blocks_dug + 1
 		return true
 	else
 		return false
