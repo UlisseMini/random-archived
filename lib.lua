@@ -150,11 +150,12 @@ function t.digUp()
 end
 
 -- This function saves the turtles posision so it can be returned to later.
-function t.savePos(name)
+function t.saveCurrentPos(name)
 	if type(name) ~= 'string' then
 		error('Position name must be a string.')
 	end
 
+	-- Creates a new table entry with "name" key
 	t.saved_posisions[name] = {
 		x = t.x,
 		y = t.y,
@@ -162,6 +163,7 @@ function t.savePos(name)
 		orientation = t.orientation
 	}
 end
+
 function t.gotoPos(name)
 	t.goto(t.saved_posisions[name].x, t.saved_posisions[name].y, t.saved_posisions[name].z)
   -- Looks the way you were looking when you took the snapshot.
