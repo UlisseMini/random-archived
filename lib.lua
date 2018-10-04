@@ -78,10 +78,16 @@ function t.look(direction)
     error('Direction is not a number')
   end
 
-	-- I've gotta find a beter way :P
-	while orientation ~= direction do
-	  t.turnRight()
-	end
+  if direction == orientation then return end
+ 
+  if (direction - orientation) % 2 == 0 then
+    t.turnLeft()
+    t.turnLeft()
+  elseif (direction - orientation) % 4 == 1 then
+    t.turnRight()
+  else
+    t.turnLeft()
+  end
 end
 
 function t.forward()
