@@ -8,6 +8,11 @@ local t = {}
 t.x, t.y, t.z = 0, 0 ,0
 -- Orientation
 t.orientation = 0
+-- Debug level of messages to display. (see log function)
+-- By default no messages are displayed.
+-- I use level 1 as error 2 as Warning 3 as Info and 4 for debug.
+
+t.debug_level = 0
 
 -- Table for saving posisions
 t.saved_posisions = {}
@@ -37,6 +42,13 @@ t.orientations = {
 	[2] = "south",
 	[3] = "west"
 }
+
+function t.log(msg, msg_debug_level)
+	if msg_debug_level <= t.debug_level then
+		-- You can modify this to log any place you want :)
+		print(msg)
+	end
+end
 
 local function orientationToNumber(orientationStr)
 	-- Turns an orientation string into an Orientation number.
@@ -162,6 +174,21 @@ function t.saveCurrentPos(name)
 		z = t.z,
 		orientation = t.orientation
 	}
+end
+function t.savePosToFile()
+	file = fs.open('.saved_posisions.dat', 'w')
+	file.write(textutils.serialize(t.saved_positions))
+	file.close()
+end
+
+function t.getPos()
+	if fs.exists('.saved_posisions.dat') then
+		file = fs.open('.saved_posisions.dat', 'r')
+		t.saved_positions = textutils.unserialize(file.readAll())
+		file.close()
+	else
+		error('No file to get posisions from.')
+	end
 end
 
 function t.gotoPos(name)
