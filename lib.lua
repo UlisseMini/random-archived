@@ -15,10 +15,12 @@ t.orientation = 0
 t.debug_level = 0
 
 -- Table for saving posisions
-t.saved_posisions = {}
+t.saved_positions = {}
 
 -- Blocks dug
 t.blocks_dug = 0
+-- Logfile location
+t.logfile = 'tlib.log'
 
 -- Diference in cords with diferent t.orientations
 local zDiff = {
@@ -43,10 +45,16 @@ t.orientations = {
 	[3] = "west"
 }
 
+-- Functions --
+
 function t.log(msg, msg_debug_level)
-	if msg_debug_level <= t.debug_level then
-		-- You can modify this to log any place you want :)
-		print(msg)
+
+	 if msg_debug_level <= t.debug_level then
+		-- You can modify this to log any place you want (check logfile varable ^^)
+		-- By default it logs to the tlib.log file.
+		file = fs.open(t.logfile, 'a')
+		file.write(msg..'\n') -- Writes message with appended newline.
+		file.close()
 	end
 end
 
@@ -96,6 +104,7 @@ function t.look(direction)
 	-- Thanks to Incin for this bit of code :)
 	if direction == t.orientation then return end
 	
+	-- If he is opposite direction turn left twice.
 	if (direction - t.orientation) % 2 == 0 then
 		t.turnLeft()
 		t.turnLeft()
@@ -168,33 +177,46 @@ function t.saveCurrentPos(name)
 	end
 
 	-- Creates a new table entry with "name" key
-	t.saved_posisions[name] = {
+	t.saved_positions[name] = {
 		x = t.x,
 		y = t.y,
 		z = t.z,
 		orientation = t.orientation
 	}
+	-- Writes t.saved_positions to a file
+	t.savePosToFile()
 end
 function t.savePosToFile()
-	file = fs.open('.saved_posisions.dat', 'w')
+	log('[DEBUG] Writing t.saved_positions to file',4)
+	file = fs.open('.saved_positions.dat', 'w')
 	file.write(textutils.serialize(t.saved_positions))
 	file.close()
 end
 
 function t.getPos()
-	if fs.exists('.saved_posisions.dat') then
-		file = fs.open('.saved_posisions.dat', 'r')
+	if fs.exists('.saved_positions.dat') then
+		log('[DEBUG] Reading .saved_positions.dat',4)
+		file = fs.open('.saved_positions.dat', 'r')
 		t.saved_positions = textutils.unserialize(file.readAll())
 		file.close()
 	else
-		error('No file to get posisions from.')
+		log('[WARNING] No file to get positions from.', 2)
 	end
 end
 
 function t.gotoPos(name)
-	t.goto(t.saved_posisions[name].x, t.saved_posisions[name].y, t.saved_posisions[name].z)
-  -- Looks the way you were looking when you took the snapshot.
-  t.look(t.saved_posisions[name].orientation)
+	if not name then
+		log('[ERROR] param "name" is nil',1)
+		return false
+	elseif not t.saved_positions[name] then
+		log('[ERROR] key is not stored in t.saved positions.')
+		return false
+	else
+		t.goto(t.saved_positions[name].x, t.saved_positions[name].y, t.saved_positions[name].z)
+  	-- Looks the way you were looking when you took the snapshot.
+		t.look(t.saved_positions[name].orientation)
+		return true
+	end
 end
 
 -- Careful this breaks blocks.
