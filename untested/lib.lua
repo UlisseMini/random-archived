@@ -10,9 +10,12 @@ t.x, t.y, t.z = 0, 0 ,0
 t.orientation = 0
 -- Debug level of messages to display. (see log function)
 -- I use level 1 as error 2 as Warning 3 as Info and 4 for debug.
-
+t.
 t.debug_level = 1
+-- Files
 t.logfile = 'log'
+t.cordsfile = 'cords'
+t.posfile = 'savedPosistions'
 
 local file -- Filled in later
 -- Table for saving posisions
@@ -74,7 +77,8 @@ function t.cleanInventory()
       turtle.select(i)
       turtle.dropDown(item.count) -- Drops all of the unwanted item
     end
-    turtle.select(prevSlot) -- Leave no trace!
+		turtle.select(prevSlot) -- Leave no trace!
+	end
 end
 
 function t.writeToFile(msg, file)
@@ -104,9 +108,38 @@ function t.log(msg, msg_debug_level)
   end
 end
 local function updatePositions()
- 	file = fs.open('.cords.dat', 'w')
+  -- Writes saved positions to file.
+ 	file = fs.open(t.posfile, 'w')
 	file.write(textutils.serialize(t.saved_positions))
 	file.close() 
+end
+-- Get cords from file
+function t.getCords()
+  local cords
+  local contents
+  if not fs.exists(cordsfile) then
+    t.log()
+  end
+  file = fs.open(cordsfile, 'r')
+  contents = file.readAll()
+  cords = textutils.unserialize(contents)
+  -- Gets cords
+  t.x = cords.x
+  t.y = cords.y
+  t.z = cords.z
+
+  -- Not going to return a value since i will just change the varables.
+
+end
+local function saveCords()
+  local cords = {
+  x = t.x,
+  y = t.y,
+  z = t.z,
+  }
+  -- Testing to see if i need the temporary cords varable.
+  t.log('Trying to write cords to file.')
+  writeToFile(textutils.serialize({x = t.x,y = t.y, z = t,z}), t.cordsfile)
 end
 
 local function orientationToNumber(orientationStr)
