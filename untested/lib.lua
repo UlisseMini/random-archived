@@ -103,11 +103,12 @@ function t.log(msg, msg_debug_level)
 	  t.writeToFile(msg)
   end
 end
-local function updateCords()
+local function updatePositions()
  	file = fs.open('.cords.dat', 'w')
 	file.write(textutils.serialize(t.saved_positions))
 	file.close() 
 end
+
 local function orientationToNumber(orientationStr)
 	-- Turns an orientation string into an Orientation number.
 	for i=0,#t.orientations do
