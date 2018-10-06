@@ -42,7 +42,37 @@ t.orientations = {
 	[2] = "south",
 	[3] = "west"
 }
+-- Unwanted items for clean inventory function.
+t.unWantedItems = {
+  'minecraft:cobblestone',
+  'minecraft:stone',
+  'minecraft:flint',
+  'minecraft:dirt',
+  'minecraft:sandstone',
+  'minecraft:sand'
+}
+local function inList(value, list)
+  -- Checks if a value is in a list.
+  for i=1,#list do
+    if value == list[i] then
+      return true
+    end
+  end
+  return false
+end
 
+function t.cleanInventory()
+  local item
+  local prevSlot = turtle.getSelectedSlot()
+
+  for i=1,16 do
+    item = turtle.getItemDetail(i)
+    if item and inList(item.name, t.unWantedItems) then
+      turtle.select(i)
+      turtle.dropDown(item.count) -- Drops all of the unwanted item
+    end
+    turtle.select(prevSlot) -- Leave no trace!
+end
 function t.log(msg, msg_debug_level)
 	if msg_debug_level <= t.debug_level then
 		-- You can modify this to log any place you want :)

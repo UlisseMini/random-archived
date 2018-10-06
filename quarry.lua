@@ -14,14 +14,11 @@ if #args ~= 1 then
 	print('Usage: quarry <Size>')
 	error()
 end
+local t = require('lib')
 
 local size = tonumber(args[1])
-local blocks_dug = 0 -- keeps track of dug blocks
-local x,y,z = 0,0,0 -- Not using x and z yet.
-local orientation = 0 -- Not being used yet.
-local t = {}
--- List of items that the cleanInventory function will throw away.
 
+-- List of items that the cleanInventory function will throw away.
 local unWantedItems = {
 	'minecraft:cobblestone',
 	'minecraft:stone',
@@ -62,54 +59,14 @@ function cleanInventory()
 		turtle.select(prevSlot) -- Leave no trace!
 	end
 end
-function t.dig()
-	if turtle.dig() then
-		blocks_dug = blocks_dug + 1
-		return true
-	else
-		return false
-	end
-end
 
-function t.digDown()
-	if turtle.digDown() then
-		blocks_dug = blocks_dug + 1
-		return true
-	else
-		return false
-	end
-end
-function t.digUp()
-	if turtle.digUp() then
-		blocks_dug = blocks_dug + 1
-		return true
-	else
-		return false
-	end
-end
-
-function t.up()
-	if turtle.up() then
-		y = y + 1
-		return true
-	else
-		return false
-	end
-end
--- Made turning functions so i can add orientation later.
-function t.turnLeft()
-	turtle.turnLeft()
-end
-function t.turnRight()
-	turtle.turnRight()
-end
 function t.turnAround()
-	turtle.turnRight()
-	turtle.turnRight()
+	t.turnRight()
+	t.turnRight()
 end
 
-function t.forward()
-	while not turtle.forward() do
+function forward()
+	while not t.forward() do
 		if not t.dig() then
 			log('Failed to dig block.\n Maybe i ran out of fuel then tried to move forward then failed so dug air?')
 			error('Error, read quarry.log for more information.')
@@ -117,21 +74,14 @@ function t.forward()
 	end
 end
 
-function t.down()
-	if turtle.down() then
-		y = y - 1
-		return true
-	else
-
-		return false
-	end
-end
-
 -- Start of program --
 log('Starting quarry.')
+t.saveCurrentPos('start')
+
 -- All the loops!
 for main=1,size do
 	for line=1,size do
+		t.saveCurrentPos('top')
 		while true do
 			-- If you fail to dig down and fail to move down then,
 			-- It must be bedrock and time to go back up.
@@ -143,33 +93,17 @@ for main=1,size do
 			end
 			
 		end
-		-- Going up loop
-		
-		-- Math.abs turns stuff like -134 to 134
+		-- Going up
+		t.gotoPos('top')
 
-		for i=1,math.abs(y) do
-			if not t.up() then
-				if not t.digUp() then
-					log('Failed to Move and dig up! (am i out of fuel?)')
-					error('Error, check quarry.log for more info')
-				end
-			end
-		end
 		-- We're now going to the next dig location.
-		t.forward()
+		forward()
 		cleanInventory() -- Drops unwanted items
 	end
-	-- Now we go to the next line for the turtle to dig.
-	-- This could be made better but i want it to be simple
-	t.turnAround()
-	for i=1,size do t.forward() end
-	t.turnAround()
-	t.turnRight()
-	t.forward()
-	t.turnLeft()
-
+	-- Goes to the next line.
+	t.goto(main, 0, 0, 0)
 end
 
+t.savePosisionsToFile()
 -- Prints an ending message with how meny blocks were dug.
-
-log('Quarry finished.\n'..tostring(blocks_dug)..' Blocks dug')
+log('Quarry finished.\n'..tostring(t.blocks_dug)..' Blocks dug')

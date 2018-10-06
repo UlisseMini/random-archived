@@ -9,11 +9,12 @@ t.x, t.y, t.z = 0, 0 ,0
 -- Orientation
 t.orientation = 0
 -- Debug level of messages to display. (see log function)
--- By default no messages are displayed.
 -- I use level 1 as error 2 as Warning 3 as Info and 4 for debug.
 
-t.debug_level = 0
+t.debug_level = 1
+t.logfile = 'log'
 
+local file -- Filled in later
 -- Table for saving posisions
 t.saved_posisions = {}
 
@@ -42,14 +43,71 @@ t.orientations = {
 	[2] = "south",
 	[3] = "west"
 }
+-- Unwanted items for clean inventory function.
+t.unWantedItems = {
+  'minecraft:cobblestone',
+  'minecraft:stone',
+  'minecraft:flint',
+  'minecraft:dirt',
+  'minecraft:sandstone',
+  'minecraft:sand'
+}
 
-function t.log(msg, msg_debug_level)
-	if msg_debug_level <= t.debug_level then
-		-- You can modify this to log any place you want :)
-		print(msg)
-	end
+-- Checks if a value is in a list.
+local function inList(value, list)
+  for i=1,#list do
+    if value == list[i] then
+      return true
+    end
+  end
+  return false
 end
 
+function t.cleanInventory()
+  local item
+  local prevSlot = turtle.getSelectedSlot()
+
+  for i=1,16 do
+    item = turtle.getItemDetail(i)
+    -- Makes sure item exists to avoid nil errors.
+    if item and inList(item.name, t.unWantedItems) then
+      turtle.select(i)
+      turtle.dropDown(item.count) -- Drops all of the unwanted item
+    end
+    turtle.select(prevSlot) -- Leave no trace!
+end
+
+function t.writeToFile(msg, file)
+  -- Function used by logging function.
+  -- i felt it was cleaner this way.
+  
+  if file == nil then
+    file = 'log' -- default
+  end
+  
+  file = fs.open(file, 'a')
+  file.write(msg..'\n') -- Adds newline
+  file.close()
+end
+
+function t.log(msg, msg_debug_level)
+	-- Logging function
+  
+  if msg_debug_level == nil then
+    t.writeToFile('[WARNING] msg_debug_level is nil, defaulting to level 3 message info.', t.logfile)
+    -- As a param this is already local.
+    msg_debug_level = 3
+  end
+
+	if msg_debug_level <= t.debug_level then
+	  t.writeToFile(msg)
+  end
+end
+local function updateCords()
+ 	file = fs.open('.cords.dat', 'w')
+	file.write(textutils.serialize(t.saved_positions))
+	file.close() 
+end
 local function orientationToNumber(orientationStr)
 	-- Turns an orientation string into an Orientation number.
 	for i=0,#t.orientations do
@@ -175,7 +233,7 @@ function t.saveCurrentPos(name)
 		orientation = t.orientation
 	}
 end
-function t.savePosToFile()
+function t.savePosisionsToFile()
 	file = fs.open('.saved_posisions.dat', 'w')
 	file.write(textutils.serialize(t.saved_positions))
 	file.close()
@@ -192,14 +250,17 @@ function t.getPos()
 end
 
 function t.gotoPos(name)
-	t.goto(t.saved_posisions[name].x, t.saved_posisions[name].y, t.saved_posisions[name].z)
-  -- Looks the way you were looking when you took the snapshot.
-  t.look(t.saved_posisions[name].orientation)
+	t.goto(t.saved_posisions[name].x, t.saved_posisions[name].y, t.saved_posisions[name].z, t.saved_posisions[name].orientation)
 end
 
 -- Careful this breaks blocks.
-function t.goto(xTarget, yTarget, zTarget)
-  -- Moves to t.y
+function t.goto(xTarget, yTarget, zTarget, orientationTarget)
+	if not xTarget or not yTarget or not zTarget or not orientationTarget then
+		t.log('Here are all the params for the goto function:', 1)
+		t.log(xTarget, yTarget, zTarget, orientationTarget, 1)
+		error('Invalid params, read log for more info.')
+	end
+	-- Moves to t.y
   while yTarget < t.y do
     t.digDown()
     t.down()
@@ -241,7 +302,9 @@ function t.goto(xTarget, yTarget, zTarget)
       t.dig()
       t.forward()
     end
-  end
+	end
+	-- Look to correct orientation
+	t.look(orientationTarget)
 end
 
 return t
