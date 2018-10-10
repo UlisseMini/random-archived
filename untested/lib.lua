@@ -1,30 +1,31 @@
 -- Valvates library for cordanite management and stuff.
 -- If you have an idea for feature make an issue or
 -- Create a pull request if you're a coder.
+-- A lot of stuff here is unfinished so
+-- Be careful and tell me how to make it better :DD
+
+-- WARNING!
+-- Since the turtle writes his coordanites to a file you should
+-- run fs.delete(t.cordsfile) when your program finishes!
 
 local t = {}
 
--- Cords and t.orientation all starting at 0
-t.x, t.y, t.z = 0, 0 ,0
--- Orientation
-t.orientation = 0
+
 -- Debug level of messages to display. (see log function)
 -- I use level 1 as error 2 as Warning 3 as Info and 4 for debug.
-t.
-t.debug_level = 1
+t.debug_level = 4
+
 -- Files
-t.logfile = 'log'
+t.logfile = 'tLib.log'
 t.cordsfile = 'cords'
-t.posfile = 'savedPosistions'
+t.posfile = 'savedPositions'
 
-local file -- Filled in later
--- Table for saving posisions
-t.saved_posisions = {}
+local file -- Used for file management
+t.saved_positions = {}-- Table for saving positions
 
--- Blocks dug
-t.blocks_dug = 0
+t.blocks_dug = 0 -- Blocks dug
 
--- Diference in cords with diferent t.orientations
+-- Diference in cords with diferent orientations
 local zDiff = {
 	[0] = -1,
 	[1] = 0,
@@ -46,6 +47,7 @@ t.orientations = {
 	[2] = "south",
 	[3] = "west"
 }
+
 -- Unwanted items for clean inventory function.
 t.unWantedItems = {
   'minecraft:cobblestone',
@@ -56,13 +58,14 @@ t.unWantedItems = {
   'minecraft:sand'
 }
 
--- Checks if a value is in a list.
-local function inList(value, list)
-  for i=1,#list do
-    if value == list[i] then
+-- Checks if a value is in a table.
+function t.inTable(value, table)
+  for key, v in ipairs(table) do
+    if value == value then
       return true
     end
   end
+  -- if its not in the table then
   return false
 end
 
@@ -73,7 +76,7 @@ function t.cleanInventory()
   for i=1,16 do
     item = turtle.getItemDetail(i)
     -- Makes sure item exists to avoid nil errors.
-    if item and inList(item.name, t.unWantedItems) then
+    if item and t.inTable(item.name, t.unWantedItems) then
       turtle.select(i)
       turtle.dropDown(item.count) -- Drops all of the unwanted item
     end
@@ -81,17 +84,20 @@ function t.cleanInventory()
 	end
 end
 
-function t.writeToFile(msg, file)
+function t.writeToFile(msg, file, mode)
   -- Function used by logging function.
   -- i felt it was cleaner this way.
-  
+	if mode == nil then
+		mode = 'a' -- By default append
+	end
+
   if file == nil then
     file = 'log' -- default
   end
   
-  file = fs.open(file, 'a')
-  file.write(msg..'\n') -- Adds newline
-  file.close()
+  fileHandle = fs.open(file, mode)
+  fileHandle.write(msg..'\n') -- Adds newline
+  fileHandle.close()
 end
 
 function t.log(msg, msg_debug_level)
@@ -104,42 +110,59 @@ function t.log(msg, msg_debug_level)
   end
 
 	if msg_debug_level <= t.debug_level then
-	  t.writeToFile(msg)
+	  t.writeToFile(msg, t.logfile)
   end
 end
+
 local function updatePositions()
   -- Writes saved positions to file.
- 	file = fs.open(t.posfile, 'w')
-	file.write(textutils.serialize(t.saved_positions))
-	file.close() 
+	t.writeToFile.write(textutils.serialize(t.saved_positions), 'w')
 end
+
 -- Get cords from file
 function t.getCords()
-  local cords
-  local contents
-  if not fs.exists(cordsfile) then
-    t.log()
-  end
-  file = fs.open(cordsfile, 'r')
-  contents = file.readAll()
-  cords = textutils.unserialize(contents)
-  -- Gets cords
-  t.x = cords.x
-  t.y = cords.y
-  t.z = cords.z
+				local cords
+				local contents
+				if t.cordsfile == nil then
+						t.log('[ERROR] t.cordsfile is nil', 1)
+						t.log('[WARNING] Without a cords file persistance will fail', 2)
+						return -- Breaks from this function
+				end
+		
+				if not fs.exists(t.cordsfile) then
+						t.log('[WARNING] t.cordsfile does not exist', 2)
+						t.log('[INFO] Creating cordsfile...', 3)
+						-- Creates cords file with 0,0,0,0 as values.
+					
+						t.writeToFile(textutils.serialize({x = 0, y = 0, z = 0, orientation = 0}), t.cordsfile, 'w')
+				end
+	
+		file = fs.open(t.cordsfile, 'r') -- Opens cordsfile for reading.
+		contents = file.readAll()
+		if not contents then
+				t.log('[ERROR] contents is nil, persistance will not work!')
+				return
+		end
 
-  -- Not going to return a value since i will just change the varables.
+		t.log('[DEBUG] Read file contents, trying to unserialize it', 4)
+		cords = textutils.unserialize(contents)
+		-- Sets coordanites
+		t.x = cords.x
+		t.y = cords.y
+		t.z = cords.z
 
+		-- Sets orientation
+		t.orientation = cords.orientation
+
+		-- Not going to return a value since i will just change the varables.
 end
+
+-- Saves coordanites to file
 local function saveCords()
-  local cords = {
-  x = t.x,
-  y = t.y,
-  z = t.z,
-  }
-  -- Testing to see if i need the temporary cords varable.
-  t.log('Trying to write cords to file.')
-  writeToFile(textutils.serialize({x = t.x,y = t.y, z = t,z}), t.cordsfile)
+		-- Commented out because it spammed a logs
+		--t.log('[DEBUG] Trying to write cords to file.', 4)
+		--t.log('[DEBUG] t.x = '..t.x..' t.y = '..t.y..' t.z = '..t.z..'t.orientation = '..t.orientation)
+		t.writeToFile(textutils.serialize({x = t.x,y = t.y, z = t.z, orientation = t.orientation}), t.cordsfile, 'w')
 end
 
 local function orientationToNumber(orientationStr)
@@ -151,12 +174,17 @@ local function orientationToNumber(orientationStr)
 	end
 end
 
+-- Turns an orientation number into an t.orientation string.
 local function orientationToString(orientationInt)
-	-- Turns an orientation number into an t.orientation string.
-	if orientations[orientationInt] then
+  -- Checks to see if orientationInt is a number
+  if type(orientationInt) ~= 'number' then
+    t.log('[ERROR] orientationInt is not a number', 1)
+    error('[ERROR] OrientationInt is not a number')
+  end
+  if orientations[orientationInt] then
 		return t.orientations[orientationInt]
 	else
-		print('Orientation is invalid.')
+		print('[ERROR] Orientation is invalid', 1)
 		print('orientationInt = '..orientationInt)
 		error()
 	end
@@ -168,11 +196,13 @@ function t.turnRight()
 	-- This "magic" math adds one to t.orientation unless t.orientation is 3, then it moves to 0.
 	-- This could also be done with an if statement but this is cleaner imo
 	t.orientation = (t.orientation + 1) % 4
+	saveCords()
 end
 
 function t.turnLeft()
 	turtle.turnLeft()
 	t.orientation = (t.orientation - 1) % 4
+	saveCords()
 end
 
 -- Looks to a direction, can be passed a string or a number
@@ -180,10 +210,9 @@ function t.look(direction)
 	-- makes sure the value passed is valid.
 	if type(direction) == 'string' then
 		direction = orientationToNumber(direction)
-	
 	elseif type(direction) ~= 'number' then
-    error('Direction is not a number')
-  end
+    	error('Direction is not a number')
+	end
 
 	-- Thanks to Incin for this bit of code :)
 	if direction == t.orientation then return end
@@ -199,10 +228,14 @@ function t.look(direction)
 end
 
 function t.forward()
+	t.log('[DEBUG] t.forward called', 4)
+
     if turtle.forward() then
-      	-- Change t.x and t.z cords
+      	t.log('[DEBUG] turtle.forward() returned true, changing cords...', 4)
+		-- Change t.x and t.z cords
       	t.x = t.x + xDiff[t.orientation]
       	t.z = t.z + zDiff[t.orientation]
+		saveCords()
     	return true
     else
     	-- If he failed to move return false and don't change the cords.
@@ -211,8 +244,11 @@ function t.forward()
 end
 
 function t.up()
+	t.log('[DEBUG] t.up function called', 4)
 	if turtle.up() then
 		t.y = t.y + 1
+		t.log('[DEBUG] Trying to save cords to file after going up', 4)
+		saveCords()
 		return true
 	else
 		return false
@@ -222,6 +258,7 @@ end
 function t.down()
 	if turtle.down() then
 		t.y = t.y - 1
+		saveCords()
 		return true
 	else
 		return false
@@ -253,46 +290,48 @@ function t.digUp()
 	end
 end
 
--- This function saves the turtles posision so it can be returned to later.
+-- This function saves the turtles position so it can be returned to later.
 function t.saveCurrentPos(name)
 	if type(name) ~= 'string' then
 		error('Position name must be a string.')
 	end
 
 	-- Creates a new table entry with "name" key
-	t.saved_posisions[name] = {
+	t.saved_positions[name] = {
 		x = t.x,
 		y = t.y,
 		z = t.z,
 		orientation = t.orientation
 	}
 end
+
 function t.savePosisionsToFile()
-	file = fs.open('.saved_posisions.dat', 'w')
-	file.write(textutils.serialize(t.saved_positions))
-	file.close()
+	t.writeToFile(textutils.serialize(t.saved_positions), t.posfile, 'w')
 end
 
 function t.getPos()
-	if fs.exists('.saved_posisions.dat') then
-		file = fs.open('.saved_posisions.dat', 'r')
+	if fs.exists(t.posfile) then
+		file = fs.open(t.posfile, 'r')
 		t.saved_positions = textutils.unserialize(file.readAll())
 		file.close()
 	else
-		error('No file to get posisions from.')
+		error('No file to get positions from.')
 	end
 end
 
 function t.gotoPos(name)
-	t.goto(t.saved_posisions[name].x, t.saved_posisions[name].y, t.saved_posisions[name].z, t.saved_posisions[name].orientation)
+	if t.saved_positions[name] == nil then error('[ERROR] t.saved_positions['..name..'] is nil') end
+	for i,v in ipairs(t.saved_positions[name]) do print(i,v) end -- temp
+	
+	t.goto(t.saved_positions[name].x, t.saved_positions[name].y, t.saved_positions[name].z, t.saved_positions[name].orientation)
 end
 
 -- Careful this breaks blocks.
 function t.goto(xTarget, yTarget, zTarget, orientationTarget)
 	if not xTarget or not yTarget or not zTarget or not orientationTarget then
-		t.log('Here are all the params for the goto function:', 1)
-		t.log(xTarget, yTarget, zTarget, orientationTarget, 1)
-		error('Invalid params, read log for more info.')
+    t.log('[DEBUG] Here are all the params for the goto function:', 4)
+		t.log('xTarget='..xTarget..'yTarget='..yTarget..'zTarget='..zTarget..'orientationTarget='..orientationTarget, 4)
+		error('t.goto Can\'t travel to nil!, read logs for more info')
 	end
 	-- Moves to t.y
   while yTarget < t.y do
@@ -340,5 +379,6 @@ function t.goto(xTarget, yTarget, zTarget, orientationTarget)
 	-- Look to correct orientation
 	t.look(orientationTarget)
 end
-
+-- Because its not defined at the top
+t.getCords()
 return t
