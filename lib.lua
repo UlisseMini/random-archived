@@ -1,6 +1,8 @@
 -- Valvates library for cordanite management and stuff.
 -- If you have an idea for feature make an issue or
 -- Create a pull request if you're a coder.
+-- A lot of stuff here is unfinished so
+-- Be careful and tell me how to make it better :DD
 
 local t = {}
 
@@ -10,7 +12,6 @@ t.x, t.y, t.z = 0, 0 ,0
 t.orientation = 0
 -- Debug level of messages to display. (see log function)
 -- I use level 1 as error 2 as Warning 3 as Info and 4 for debug.
-t.
 t.debug_level = 1
 -- Files
 t.logfile = 'log'
