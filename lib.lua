@@ -7,6 +7,19 @@
 -- WARNING!
 -- Since the turtle writes his coordanites to a file you should
 -- run fs.delete(t.cordsfile) when your program finishes!
+-- if you don't then his coords will get all screwed up if he moved without updating his coords
+
+-- If you're using gps you can manually set coords and then update them 
+-- heres some untested example code
+
+--[[
+t = require('lib')
+t.x, t.y, t.z = gps.locate(0.5)
+-- In this example orientation is still set to north by default,
+-- if you want to find orientation you'll need code that compares cords
+-- after you move, i might add this later but for now its up to you! ;)
+
+--]]
 
 local t = {}
 
@@ -119,7 +132,7 @@ local function updatePositions()
   t.writeToFile.write(textutils.serialize(t.saved_positions), 'w')
 end
 
--- Get cords from file
+-- Get cords from file if file does not exist create one and set coords to 0,0,0,0
 function t.getCords()
   local cords
   local contents
