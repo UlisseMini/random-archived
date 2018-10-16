@@ -92,7 +92,7 @@ function t.writeToFile(msg, file, mode)
   end
 
   if file == nil then
-    file = 'log' -- default
+    file = t.logfile -- default
   end
   
   fileHandle = fs.open(file, mode)
