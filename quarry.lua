@@ -12,7 +12,7 @@ local args = { ... }
 
 if #args ~= 1 then
 	print('Usage: quarry <Size>')
-	error()
+	return
 end
 local t = require('lib')
 
@@ -46,7 +46,7 @@ local function inList(value, list)
 	return false
 end
 
-function cleanInventory()
+local function cleanInventory()
 	local item
 	local prevSlot = turtle.getSelectedSlot()
 
@@ -65,7 +65,7 @@ function t.turnAround()
 	t.turnRight()
 end
 
-function forward()
+local function forward()
 	while not t.forward() do
 		if not t.dig() then
 			log('Failed to dig block.\n Maybe i ran out of fuel then tried to move forward then failed so dug air?')

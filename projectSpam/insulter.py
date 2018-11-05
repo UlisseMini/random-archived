@@ -9,18 +9,17 @@ sleeptime = int(input('Time between insults\n> '))
 print('Starting in 5 seconds...')
 sleep(5)
 
-def getText():
-    return requests.get('https://insult.mattbas.org/api/insult').text
 
 while True:
-    text = getText()
-    # Convert to lowercase to avoid an error.
+    text = requests.get('https://insult.mattbas.org/api/insult').text
+    # Keybord api hates uppercase 
     text = text.lower()
-
+    
+    # Writes the text
     keyboard.write(text, delay=0.05)
     # If pressEnter = True then press enter after writing text.
     if pressEnter == True:
-        # Slight delay because computers are not perfect.
+        # Slight delay because computers are not perfect
         sleep(0.3)
         keyboard.send('enter')
     sleep(sleeptime)

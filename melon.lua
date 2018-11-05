@@ -1,17 +1,17 @@
-args = { ... }
+local args = { ... }
 if #args ~= 4 then
     print('Usage: melon <side> <melons> <space between> <sleeptime>')
     return
 else
-    side = args[1]
-    melons = tonumber(args[2])
+    local side = args[1]
+    local melons = tonumber(args[2])
     -- fixes some bug i dont know where the bug is
-    melons = melons - 1
-    space = tonumber(args[3])
-    sleeptime = tonumber(args[4])
+    local melons = melons - 1
+    local space = tonumber(args[3])
+    local sleeptime = tonumber(args[4])
 end
 
-function checkformelon()
+local function checkformelon()
     -- add compare here once i get melon block
     if turtle.detect() then
         return true
@@ -20,7 +20,7 @@ function checkformelon()
     end
 end
 
-function checkfuel()
+local function checkfuel()
   turtle.select(16)
   if turtle.getFuelLevel() <= (melons * space) then
       print('Waiting for fuel')
@@ -31,7 +31,7 @@ function checkfuel()
   end
   -- return true   
 end
-function nextmelon()
+local function nextmelon()
   if side == 'left' then
     turtle.turnLeft()
     turtle.forward()
@@ -42,17 +42,17 @@ function nextmelon()
     turtle.turnLeft()
   else
     print('Side is not right or left exiting with error')
-    return
+    error()
   end
 end
-function swapside()
+local function swapside()
   if side == 'right' then
     return 'left'
   elseif side == 'left' then
     return 'right'
   else
     print('Side is not left or right exiting')
-    return
+    error()
   end
 end
 while true do

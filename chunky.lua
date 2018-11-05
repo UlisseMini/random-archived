@@ -1,10 +1,13 @@
 -- Created by valvate / chips ahoy
 
--- Imports my library no matter the CC version!
+-- Imports
 local t
+local simplemine
 if require then
   t = require('lib')
+  simplemine = require('simplemine')
 elseif dofile then
+  simplemine = dofile('simplemine.lua')
   t = dofile('lib.lua')
 else
   error('Failed to import lib.lua')
@@ -18,6 +21,7 @@ local trees = { -- Logs checked by checkTree()
   'minecraft:log',
   'minecraft:log2',
 }
+-- Sum functions
 local function checkTree()
   -- Returns true if a tree has grown
   local _, block = turtle.inspect()
@@ -25,7 +29,7 @@ local function checkTree()
     return(t.inTable(block.name, trees)) -- Returns true if block.name is in the "trees" table
   end
 end
-local function tree()
+local function collectTree()
   if checkTree() == true then 
     t.saveCurrentPos('baseOfTree')
     t.dig()

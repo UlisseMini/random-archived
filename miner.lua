@@ -1,5 +1,5 @@
 -- Args --
-args = { ... }
+local args = { ... }
 if #args ~= 1 then
   print('Usage: mine <distance>')
   error()
