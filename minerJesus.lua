@@ -165,10 +165,11 @@ local function dropOff()
 	gotoPos("home")
 	local prevSlot = turtle.getSelectedSlot()
 	for i=1,15 do
-		if inventory[i] ~= "empty" then
+    -- Strange glitch where it says depositing bucket, even through bucket is in slot 16.
+		if inventory[i] ~= "empty" and inventory[i].name ~= "minecraft:bucket" then
 			turtle.select(i)
 			log("[DEBUG] Depositing "..tostring(inventory[i].count).." "..inventory[i].name, 3)
-			
+
 			say("Depositing "..tostring(inventory[i].count).." "..inventory[i].name:match(":(.+)"), 3)
 			turtle.dropDown(inventory[i].count)
 		end
@@ -202,7 +203,7 @@ local function mine()
 		if status and item.name == "minecraft:lava" then
 			say("slurp slurp gotta slurp that lava")
 			local prevSlot = turtle.getSelectedSlot()
-			turtle.select(bSlot)
+			turtle.select(16)
 			turtle.place()
 			turtle.refuel()
 			turtle.select(prevSlot)
@@ -295,7 +296,7 @@ local function main()
 	end
 
 	t.saveCurrentPos("quarry")
-	for main=1,quarrySize*2 do
+	for main=1,quarrySize * 2 do
 		for line=1,quarrySize do
 			mine()
 			t.cleanInventory()

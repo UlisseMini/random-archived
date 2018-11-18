@@ -91,7 +91,7 @@ for main=1,size do
 			if not t.down() and not t.digDown() then
 				break
 			end
-			
+
 		end
 		-- Going up
 		t.gotoPos('top')
