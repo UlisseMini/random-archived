@@ -333,6 +333,6 @@ init()
 local status = pcall(main)
 if not status then
 	print("Miner jesus crashed, or you terminated him")
-	print("I started with "..tostring(startFuel))
-	print("I ended with "..tostring(turtle.getFuelLevel()))
 end
+print("I started with "..tostring(startFuel))
+print("I ended with "..tostring(turtle.getFuelLevel()))
