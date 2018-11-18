@@ -20,6 +20,7 @@ local err
 
 local safetyBuffer = 300 -- Fuel safety buffer
 local startFuel
+local space = 1 -- How much to move forward before quarrying
 
 -- Manage args
 local args = { ... }
@@ -350,7 +351,7 @@ end
 
 local function main()
 	-- Go to the first mining position.
-	for i=1,10 do
+	for i=1,space do
 		t.dig()
 		t.forward()
 	end
