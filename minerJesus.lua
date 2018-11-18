@@ -177,7 +177,6 @@ local function dropOff()
 	for i=1,16 do
 		-- Strange glitch where it says depositing bucket, even through bucket is in slot 16.
 		if inventory and inventory[i] ~= "empty" then
-			log("[DEBUG] Checking "..inventory[i].name, 4)
 			if inventory[i].name ~= "minecraft:bucket" then
 				turtle.select(i)
 				log("[INFO] Depositing "..tostring(inventory[i].count).." "..inventory[i].name:match(":(.+)"), 3)
