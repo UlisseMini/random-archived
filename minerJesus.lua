@@ -8,7 +8,7 @@
 
 local t = require("val_lib")
 local inventory
-local debug_level = 4
+local debug_level = 3
 local logfile			= "minerJesus.log"
 local doLogging		= true
 local debugging   = false
@@ -284,15 +284,22 @@ end
 
 local function createStartup()
 	-- Create startup file for safety
+	if fs.exists("startup") then
+		if fs.exists("oldstartup") then
+			log("[FATAL] oldstartup exists, please delete or rename it")
+		end
+		fs.move("startup", "oldstartup")
+	end
+
 	local safety = [[
-	local t = require("val_lib")
-	t.gotoPos("home")
-	print("[FATAL] Server restarted or my chunk got unloaded.")
-	fs.delete("safety")
+local t = require("val_lib")
+t.gotoPos("home")
+print("[FATAL] Server restarted or my chunk got unloaded.")
+fs.delete("safety")
 	]]
 
-	local f = fs.open("startup", "a")
-	f.write("\nshell.run(\"safety\"")
+	local f = fs.open("startup", "w")
+	f.write("\nshell.run(\"safety\")")
 	f.close()
 
 	local f = fs.open("safety", "w")
@@ -392,4 +399,11 @@ else
 	end
 	print("I started with "..tostring(startFuel).." fuel")
 	print("I ended with "..tostring(turtle.getFuelLevel()).." fuel")
+
+	-- Cleanup
+	fs.delete("safety")
+	fs.delete("startup")
+	fs.move("oldstartup", "startup")
+	fs.delete("coords")
+	fs.delete("savedPositions")
 end
