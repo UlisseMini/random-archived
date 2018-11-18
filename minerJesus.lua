@@ -8,12 +8,12 @@
 
 local t = require("val_lib")
 local inventory
-local debug_level = 3
-local logfile     = "minerJesus.log"
-local doLogging   = true
+local debug_level = 4
+local logfile			= "minerJesus.log"
+local doLogging		= true
 
 local websocket_host = "ws://nh.zapto.org:8423"
-local use_websockets = true
+local use_websockets = false
 local c
 local err
 
@@ -74,11 +74,11 @@ local function say(msg)
 		-- Says stuff over websocket
 		log("[DEBUG] Saying "..msg.." Over websocket", 4)
 		local status = pcall(c.send, msg)
-    if not status then
-      log("[INFO] Failed to send to server, closing connection...", 3)
-      pcall(c.close)
-      use_websockets = false
-    end
+		if not status then
+			log("[INFO] Failed to send to server, closing connection...", 3)
+			pcall(c.close)
+			use_websockets = false
+		end
 	end
 end
 
@@ -170,7 +170,7 @@ local function dropOff()
 	gotoPos("home")
 	local prevSlot = turtle.getSelectedSlot()
 	for i=1,15 do
-    -- Strange glitch where it says depositing bucket, even through bucket is in slot 16.
+		-- Strange glitch where it says depositing bucket, even through bucket is in slot 16.
 		if inventory[i] ~= "empty" and inventory[i].name ~= "minecraft:bucket" then
 			turtle.select(i)
 			log("[DEBUG] Depositing "..tostring(inventory[i].count).." "..inventory[i].name, 3)
@@ -184,12 +184,12 @@ local function dropOff()
 end
 
 local function refuelAll()
-  local prevSlot = turtle.getSelectedSlot()
+	local prevSlot = turtle.getSelectedSlot()
 	for i=1,15 do
 		turtle.select(i)
 		turtle.refuel(64)
 	end
-  turtle.select(prevSlot)
+	turtle.select(prevSlot)
 end
 
 local function mine()
@@ -208,14 +208,14 @@ local function mine()
 		-- If you found the lava juice, slurp it up and refuel
 		local status, item = turtle.inspect()
 		if status and item.name == "minecraft:lava" then
-      log("[INFO] Found lava refueling...", 3)
+			log("[INFO] Found lava refueling...", 3)
 			say("slurp slurp gotta slurp that lava")
 			local prevSlot = turtle.getSelectedSlot()
 			turtle.select(16)
 			turtle.place()
 			turtle.refuel()
 			turtle.select(prevSlot)
-      log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
+			log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
 		end
 	end
 	refuelAll()
@@ -310,7 +310,7 @@ local function main()
 			mine()
 			t.cleanInventory()
 			for i=1,2 do
-        forward()
+				forward()
 			end
 		end
 
