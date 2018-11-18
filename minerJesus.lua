@@ -18,6 +18,7 @@ local c
 local err
 
 local safetyBuffer = 300 -- Fuel safety buffer
+local startFuel
 
 -- Manage args
 local args = { ... }
@@ -295,6 +296,7 @@ local function init()
 	if quarrySize % 2 ~= 0 then quarrySize = quarrySize + 1 end
 	-- Drop your items into the chest
 	dropOff()
+	startFuel = turtle.getFuelLevel()
 end
 
 local function main()
@@ -327,4 +329,10 @@ end
 
 -- Run the shiet
 init()
-main()
+
+local status = pcall(main)
+if not status then
+	print("Miner jesus crashed, or you terminated him")
+	print("I started with "..tostring(startFuel))
+	print("I ended with "..tostring(turtle.getFuelLevel()))
+end
