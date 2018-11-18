@@ -38,8 +38,8 @@ end
 -- Logger function
 local function log(msg, msg_level)
 	if not msg_level then
-		print("msg_level is nil")
-		error()
+		log("[ERROR] msg_level is nil", 1)
+		msg_level = 4
 	end
 
 	if msg_level <= debug_level then
@@ -250,40 +250,37 @@ end
 
 -- Return true if you have space in your inventory, false if not
 local function haveSpace()
-	local retval = false
 	for i=1,15 do
 		if turtle.getItemCount(i) == 0 then
-			retval = true
+			return true
 		end
 	end
-	return retval
+	return false
 end
 
 local function iShouldReturnHome()
-	local retval = false
-
 	-- If you don't have space return home
 	if haveSpace() == false then
-		retval = true
+		return true
 	end
 
 	-- Check that you have enough fuel
 	local fuelNeeded = t.calcFuelForPos("home")
 	if fuelNeeded > turtle.getFuelLevel() then
 		log("[WARNING] We don't have enough fuel to return home, trying to get there anyways", 2)
-		retval = true
+		return true
 	elseif fuelNeeded > (turtle.getFuelLevel() * 2) then
 		log("[INFO] Can't contiune, out of fuel. returning home...", 3)
-		retval = true
+		return true
 	end
-	return retval
+	return false
 end
 
 local function createStartup()
 	-- Create startup file for safety
 	if fs.exists("startup") then
 		if fs.exists("oldstartup") then
-			log("[FATAL] oldstartup exists, please delete or rename it")
+			log("[FATAL] oldstartup exists, please delete or rename it", 0)
 		end
 		fs.move("startup", "oldstartup")
 	end
