@@ -73,7 +73,11 @@ local function say(msg)
 	if use_websockets then
 		-- Says stuff over websocket
 		log("[DEBUG] Saying "..msg.." Over websocket", 4)
-		c.send(msg)
+		local status = pcall(c.send, msg)
+    if not status then
+      log("[INFO] Failed to send to server, closing connection...", 3)
+      pcall(c.close)
+      use_websockets = false
 	end
 end
 
