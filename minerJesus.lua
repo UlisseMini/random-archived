@@ -162,18 +162,11 @@ local function inInv(itemName)
 end
 
 
-local function gotoPos(pos)
-	-- Go to the traveling y position
-	t.goto(t.x, t.saved_positions["home"].y, t.z, t.orientation)
-	-- Go to the position
-	t.gotoPos(pos)
-end
-
 -- Drops all items into chest
 local function dropOff()
 	inventory = getInvMap()
 	t.saveCurrentPos("pre dropoff spot")
-	gotoPos("home")
+	t.gotoPos("home")
 	local prevSlot = turtle.getSelectedSlot()
 	for i=1,16 do
 		-- Strange glitch where it says depositing bucket, even through bucket is in slot 16.
@@ -187,7 +180,7 @@ local function dropOff()
 		end
 	end
 	turtle.select(prevSlot)
-	gotoPos("pre dropoff spot")
+	t.gotoPos("pre dropoff spot")
 end
 
 local function refuelAll()
@@ -374,9 +367,14 @@ local function main()
 		end
 
 		-- Goes to the next line for digging.
-		t.gotoPos("quarry")
-		t.goto(t.x + 1, t.y, t.z, t.orientation)
+		if main < quarrySize then
+			t.gotoPos("quarry")
+			t.goto(t.x + 1, t.y, t.z, t.orientation)
+		else
+			t.gotoPos("home")
+		end
 	end
+	t.gotoPos("home")
 end
 
 -- Run the shiet
