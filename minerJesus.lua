@@ -11,7 +11,7 @@ local inventory
 local debug_level = 4
 local logfile			= "minerJesus.log"
 local doLogging		= true
-local debugging   = true
+local debugging   = false
 
 local websocket_host = "ws://nh.zapto.org:8423"
 local use_websockets = false
@@ -201,31 +201,32 @@ end
 -- I bet i could do the faster, but copy and paste is faster :^)
 local function checkForLava()
 		-- If you found the lava juice, slurp it up and refuel
-		local status, item   = turtle.inspect()
-		local status2, item2 = turtle.inspectDown()
+		local _, item1   = turtle.inspect()
+		local _, item2 = turtle.inspectDown()
 
-		if status then log("[DEBUG] Checking if "..item.name.." is lava", 4) end
-		if status and item.name == "minecraft:lava" then
-			log("[INFO] Found lava refueling...", 3)
-			say("slurp slurp gotta slurp that lava")
+		if item1.name and item1.name == "minecraft:lava" or "minecraft:flowing_lava" then
 			local prevSlot = turtle.getSelectedSlot()
 
 			turtle.select(16)
-			turtle.place()
-			turtle.refuel()
+			if turtle.place() and turtle.refuel(1) then
+				log("[INFO] Found lava refueling...", 3)
+				say("slurp slurp gotta slurp that lava")
+				log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
+			end
+
 			turtle.select(prevSlot)
-			log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
 		end
-		if status2 and item2.name == "minecraft:lava" then
+		if item1.name and item1.name == "minecraft:lava" or "minecraft:flowing_lava" then
 			local prevSlot = turtle.getSelectedSlot()
-			log("[INFO] Found lava refueling...", 3)
-			say("slurp slurp gotta slurp that lava")
 
 			turtle.select(16)
-			turtle.place()
-			turtle.refuel()
+			if turtle.placeDown() and turtle.refuel(1) then
+				log("[INFO] Found lava refueling...", 3)
+				say("slurp slurp gotta slurp that lava")
+				log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
+			end
+
 			turtle.select(prevSlot)
-			log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
 		end
 end
 
@@ -366,6 +367,8 @@ else
 	local status = pcall(main)
 	if not status then
 		print("Miner jesus crashed, or you terminated him")
+		print("Going home...")
+		dropOff()
 	end
 	print("I started with "..tostring(startFuel).." fuel")
 	print("I ended with "..tostring(turtle.getFuelLevel()).." fuel")
