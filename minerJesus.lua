@@ -78,6 +78,7 @@ local function say(msg)
       log("[INFO] Failed to send to server, closing connection...", 3)
       pcall(c.close)
       use_websockets = false
+    end
 	end
 end
 
