@@ -11,6 +11,7 @@ local inventory
 local debug_level = 4
 local logfile			= "minerJesus.log"
 local doLogging		= true
+local debugging   = true
 
 local websocket_host = "ws://nh.zapto.org:8423"
 local use_websockets = false
@@ -333,10 +334,14 @@ end
 
 -- Run the shiet
 init()
-
-local status = pcall(main)
-if not status then
-	print("Miner jesus crashed, or you terminated him")
+-- If we're debugging don't pcall main
+if debugging == true then
+	main()
+else
+	local status = pcall(main)
+	if not status then
+		print("Miner jesus crashed, or you terminated him")
+	end
+	print("I started with "..tostring(startFuel).." fuel")
+	print("I ended with "..tostring(turtle.getFuelLevel()).." fuel")
 end
-print("I started with "..tostring(startFuel).." fuel")
-print("I ended with "..tostring(turtle.getFuelLevel()).." fuel")
