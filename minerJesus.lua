@@ -183,10 +183,12 @@ local function dropOff()
 end
 
 local function refuelAll()
+  local prevSlot = turtle.getSelectedSlot()
 	for i=1,15 do
 		turtle.select(i)
 		turtle.refuel(64)
 	end
+  turtle.select(prevSlot)
 end
 
 local function mine()
@@ -205,12 +207,14 @@ local function mine()
 		-- If you found the lava juice, slurp it up and refuel
 		local status, item = turtle.inspect()
 		if status and item.name == "minecraft:lava" then
+      log("[INFO] Found lava refueling...", 3)
 			say("slurp slurp gotta slurp that lava")
 			local prevSlot = turtle.getSelectedSlot()
 			turtle.select(16)
 			turtle.place()
 			turtle.refuel()
 			turtle.select(prevSlot)
+      log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
 		end
 	end
 	refuelAll()
@@ -252,7 +256,7 @@ end
 local function init()
 	-- Clear the logfile at the start
 	fs.delete(logfile)
-	
+
 	t.saveCurrentPos("home")
 	-- Required for dropOff()
 	inventory = getInvMap()
@@ -305,8 +309,7 @@ local function main()
 			mine()
 			t.cleanInventory()
 			for i=1,2 do
-				t.dig()
-				t.forward()
+        forward()
 			end
 		end
 
