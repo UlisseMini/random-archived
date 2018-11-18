@@ -174,7 +174,7 @@ local function dropOff()
 	t.saveCurrentPos("pre dropoff spot")
 	gotoPos("home")
 	local prevSlot = turtle.getSelectedSlot()
-	for i=1,15 do
+	for i=1,16 do
 		log("[DEBUG] inventory = "..textutils.serialize(inventory), 4)
 		-- Strange glitch where it says depositing bucket, even through bucket is in slot 16.
 		if inventory and inventory[i] ~= "empty" then
