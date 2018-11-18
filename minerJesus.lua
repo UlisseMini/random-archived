@@ -172,7 +172,7 @@ local function dropOff()
 	local prevSlot = turtle.getSelectedSlot()
 	for i=1,15 do
 		-- Strange glitch where it says depositing bucket, even through bucket is in slot 16.
-		if inventory[i] ~= "empty" and inventory[i].name ~= "minecraft:bucket" then
+		if inventory[i] ~= "empty" then
 			turtle.select(i)
 			log("[DEBUG] Depositing "..tostring(inventory[i].count).." "..inventory[i].name, 3)
 
@@ -317,6 +317,7 @@ local function main()
 		end
 
 		if iShouldReturnHome() then
+			inventory = getInvMap()
 			dropOff()
 		end
 
@@ -334,5 +335,5 @@ local status = pcall(main)
 if not status then
 	print("Miner jesus crashed, or you terminated him")
 end
-print("I started with "..tostring(startFuel))
-print("I ended with "..tostring(turtle.getFuelLevel()))
+print("I started with "..tostring(startFuel).." fuel")
+print("I ended with "..tostring(turtle.getFuelLevel()).." fuel")
