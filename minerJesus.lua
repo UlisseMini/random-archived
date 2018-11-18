@@ -199,6 +199,37 @@ local function refuelAll()
 	turtle.select(prevSlot)
 end
 
+-- I bet i could do the faster, but copy and paste is faster :^)
+local function checkForLava()
+		-- If you found the lava juice, slurp it up and refuel
+		local status, item   = turtle.inspect()
+		local status2, item2 = turtle.inspectDown()
+
+		if status then log("[DEBUG] Checking if "..item.name.." is lava", 4) end
+		if status and item.name == "minecraft:lava" then
+			log("[INFO] Found lava refueling...", 3)
+			say("slurp slurp gotta slurp that lava")
+			local prevSlot = turtle.getSelectedSlot()
+
+			turtle.select(16)
+			turtle.place()
+			turtle.refuel()
+			turtle.select(prevSlot)
+			log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
+		end
+		if status2 and item2.name == "minecraft:lava" then
+			local prevSlot = turtle.getSelectedSlot()
+			log("[INFO] Found lava refueling...", 3)
+			say("slurp slurp gotta slurp that lava")
+
+			turtle.select(16)
+			turtle.place()
+			turtle.refuel()
+			turtle.select(prevSlot)
+			log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
+		end
+end
+
 local function mine()
 	t.saveCurrentPos("mine top")
 	while true do
@@ -212,18 +243,7 @@ local function mine()
 			break
 		end
 
-		-- If you found the lava juice, slurp it up and refuel
-		local status, item = turtle.inspect()
-		if status and item.name == "minecraft:lava" then
-			log("[INFO] Found lava refueling...", 3)
-			say("slurp slurp gotta slurp that lava")
-			local prevSlot = turtle.getSelectedSlot()
-			turtle.select(16)
-			turtle.place()
-			turtle.refuel()
-			turtle.select(prevSlot)
-			log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
-		end
+		checkForLava()
 	end
 	refuelAll()
 	t.gotoPos("mine top")
