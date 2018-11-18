@@ -212,7 +212,8 @@ local function checkForLava()
 			if turtle.place() and turtle.refuel(1) then
 				log("[INFO] Found lava refueling...", 3)
 				say("slurp slurp gotta slurp that lava")
-				log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
+				say("My fuel level is now "..tostring(turtle.getFuelLevel()))
+				log("[INFO] My fuel level is now "..tostring(turtle.getFuelLevel(), 3))
 			end
 
 			turtle.select(prevSlot)
