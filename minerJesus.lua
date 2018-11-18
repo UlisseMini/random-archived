@@ -387,7 +387,7 @@ else
 	if not status then
 		print("Miner jesus crashed, or you terminated him")
 		print("Going home...")
-		dropOff()
+		t.gotoPos("home")
 	end
 	print("I started with "..tostring(startFuel).." fuel")
 	print("I ended with "..tostring(turtle.getFuelLevel()).." fuel")
