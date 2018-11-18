@@ -373,9 +373,8 @@ local function main()
 		end
 
 		-- Goes to the next line for digging.
-		-- Since "main" is now one more then the last line.
 		t.gotoPos("quarry")
-		t.goto(main, t.y, t.z, t.orientation)
+		t.goto(t.x + 1, t.y, t.z, t.orientation)
 	end
 end
 
