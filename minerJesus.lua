@@ -359,7 +359,7 @@ local function main()
 	end
 
 	t.saveCurrentPos("quarry")
-	for main=1,quarrySize * 2 do
+	for main=1,quarrySize do
 		for line=1,quarrySize do
 			mine()
 			t.cleanInventory()
