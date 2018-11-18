@@ -34,6 +34,23 @@ if type(quarrySize) ~= "number" then
 	print("quarrySize must be a number.")
 end
 
+-- Return a map of your inventory
+local function getInvMap()
+	local inv = {}
+	local item
+
+	for i=1,16 do
+		item = turtle.getItemDetail(i)
+		if item then
+			inv[i] = item
+		else
+			inv[i] = "empty"
+		end
+	end
+
+	return inv
+end
+
 -- Logger function
 local function log(msg, msg_level)
 	if not msg_level then
@@ -130,34 +147,19 @@ local function inInvList(list, itemName)
 			return slot, item
 		end
 	end
+	return nil, nil
 end
 
 local function inInv(itemName)
+	inventory = getInvMap()
 	for slot,item in pairs(inventory) do
 		if item ~= "empty" and item.name == itemName then
 			return slot, item
 		end
 	end
-	-- Not sure if i need this but just in case
 	return nil, nil
 end
 
--- Return a map of your inventory
-local function getInvMap()
-	local inv = {}
-	local item
-
-	for i=1,16 do
-		item = turtle.getItemDetail(i)
-		if item then
-			inv[i] = item
-		else
-			inv[i] = "empty"
-		end
-	end
-
-	return inv
-end
 
 local function gotoPos(pos)
 	-- Go to the traveling y position
@@ -168,6 +170,7 @@ end
 
 -- Drops all items into chest
 local function dropOff()
+	inventory = getInvMap()
 	t.saveCurrentPos("pre dropoff spot")
 	gotoPos("home")
 	local prevSlot = turtle.getSelectedSlot()
