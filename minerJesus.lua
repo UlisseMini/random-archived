@@ -269,8 +269,6 @@ local function init()
 		if item.count > 1 then
 			log("[FATAL] Only one bucket please!", 0)
 		end
-		turtle.select(slot)
-		turtle.transferTo(16)
 	else
 		log("[FATAL] Please insert one bucket into my inventory!", 0)
 	end
@@ -296,6 +294,11 @@ local function init()
 	if quarrySize % 2 ~= 0 then quarrySize = quarrySize + 1 end
 	-- Drop your items into the chest
 	dropOff()
+
+	-- Put the bucket in the right slot
+	turtle.select(slot)
+	turtle.transferTo(16)
+
 	startFuel = turtle.getFuelLevel()
 end
 
