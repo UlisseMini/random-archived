@@ -280,6 +280,24 @@ local function iShouldReturnHome()
 	return retval
 end
 
+local function createStartup()
+	-- Create startup file for safety
+	local safety = [[
+	local t = require("val_lib")
+	t.gotoPos("home")
+	print("[FATAL] Server restarted or my chunk got unloaded.")
+	fs.delete("safety")
+	]]
+
+	local f = fs.open("startup", "a")
+	f.write("\nshell.run(\"safety\"")
+	f.close()
+
+	local f = fs.open("safety", "w")
+	f.write(safety)
+	f.close()
+end
+
 -- Ran on start
 local function init()
 	-- Clear the logfile at the start
@@ -327,6 +345,7 @@ local function init()
 	turtle.transferTo(16)
 
 	startFuel = turtle.getFuelLevel()
+	createStartup()
 end
 
 local function main()
