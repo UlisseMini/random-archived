@@ -34,6 +34,22 @@ if type(quarrySize) ~= "number" then
 	print("quarrySize must be a number.")
 end
 
+-- Logger function
+local function log(msg, msg_level)
+	if not msg_level then
+		print("msg_level is nil")
+		error()
+	end
+
+	if msg_level <= debug_level then
+		print(msg)
+		t.writeToFile(msg, logfile, "a")
+	end
+	if msg_level == 0 then
+		error()
+	end
+end
+
 -- Return a map of your inventory
 local function getInvMap()
 	local inv = {}
@@ -49,22 +65,6 @@ local function getInvMap()
 	end
 
 	return inv
-end
-
--- Logger function
-local function log(msg, msg_level)
-	if not msg_level then
-		print("msg_level is nil")
-		error()
-	end
-
-	if msg_level <= debug_level then
-		print(msg)
-		t.writeToFile(msg, logfile, "a")
-	end
-	if msg_level == 0 then
-		error()
-	end
 end
 
 local function forward()
