@@ -235,13 +235,10 @@ end
 local function mine()
 	t.saveCurrentPos("mine top")
 	while true do
-		-- Go down no matter what!
-		t.digDown()
-		while turtle.attackDown() do end
-		t.dig()
 		while turtle.attack() do end
-
-		if not t.down() then
+		t.dig()
+		-- Break from the loop at bedrock
+		if not t.digDown() and not turtle.attackDown() and not t.down() then
 			break
 		end
 
