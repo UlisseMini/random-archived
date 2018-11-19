@@ -217,7 +217,7 @@ local function checkForLava()
 			turtle.select(16)
 			if turtle.placeDown() and turtle.refuel(1) then
 				log("[INFO] Found lava refueling...", 3)
-				say("slurp slurp gotta slurp that lava")
+				say("shopromsdhdhfshorhslrp gotta slurp that lava shropglonpshrulp")
 				log("[INFO] My fuel level is now "..turtle.getFuelLevel(), 3)
 			end
 
@@ -261,6 +261,7 @@ local function iShouldReturnHome()
 	local fuelNeeded = t.calcFuelForPos("home")
 	if fuelNeeded > turtle.getFuelLevel() then
 		log("[WARNING] We don't have enough fuel to return home, trying to get there anyways", 2)
+		say("no fuel juice i do try get home")
 		return true
 	elseif fuelNeeded > (turtle.getFuelLevel() * 2) then
 		log("[INFO] Can't contiune, out of fuel. returning home...", 3)
@@ -386,6 +387,7 @@ else
 	local status = pcall(main)
 	if not status then
 		print("Miner jesus crashed, or you terminated him")
+		say("oh god why why did you kill me, i thought we were buddies... did i do something wrong?")
 		print("Going home...")
 		t.gotoPos("home")
 	end
