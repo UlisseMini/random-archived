@@ -3,8 +3,8 @@
 -- TODO:
 -- Make it dig mines in a circle
 -- Make it check fuel (add fuel calculation for going to a position in val_lib)
--- Make it remotely controlable through websockets
--- Create a startup file to contiune when the server restarts.
+-- Make it remotely controllable through websockets
+-- Create a startup file to continue when the server restarts.
 
 local t = require("val_lib")
 local inventory
